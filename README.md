@@ -12,7 +12,7 @@ Request
     HTTP Verb: GET
     Body: None
 ```
-```json
+```
 Response
     HTTP Status:
         200 OK if the user is authorized and the Cash Card was successfully retrieved
