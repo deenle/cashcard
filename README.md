@@ -37,6 +37,23 @@ Response
 
 ### CREATE
 
+**Request:**
+
+* Method: POST
+* URI: /cashcards/
+* Body:
+
+    ```json
+  {
+      amount: 123.45
+  }
+    ```
+
+**Response:**
+
+* Status Code: 201 CREATED
+* Header: `Location=/cashcards/42`
+
 ### READ
 
 ### UPDATE
