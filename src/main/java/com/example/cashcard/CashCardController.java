@@ -1,5 +1,8 @@
 package com.example.cashcard;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -20,11 +23,7 @@ public class CashCardController {
     @GetMapping("/{requestedId}")
     private ResponseEntity<CashCard> findById(@PathVariable Long requestedId) {
         Optional<CashCard> cashCardOptional = cashCardRepository.findById(requestedId);
-        if (cashCardOptional.isPresent()) {
-            return ResponseEntity.ok(cashCardOptional.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return cashCardOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -38,7 +37,13 @@ public class CashCardController {
     }
 
     @GetMapping
-    private ResponseEntity<Iterable<CashCard>> findAll() {
-        return ResponseEntity.ok(cashCardRepository.findAll());
+    private ResponseEntity<Iterable<CashCard>> findAll(Pageable pageable) {
+        Page<CashCard> page = cashCardRepository.findAll(
+                PageRequest.of(
+                        pageable.getPageNumber(),
+                        pageable.getPageSize()
+                )
+        );
+        return ResponseEntity.ok(page.getContent());
     }
 }

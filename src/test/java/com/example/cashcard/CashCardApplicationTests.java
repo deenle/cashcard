@@ -3,7 +3,6 @@ package com.example.cashcard;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import net.minidev.json.JSONArray;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,6 +10,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
 
@@ -27,21 +27,21 @@ class CashCardApplicationTests {
     @Test
     void shouldReturnACashCardWhenDataIsSaved() {
         ResponseEntity<String> response = restTemplate.getForEntity("/cashcards/99", String.class);
-        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         DocumentContext documentContext = JsonPath.parse(response.getBody());
         Number id = documentContext.read("$.id");
-        Assertions.assertThat(id).isEqualTo(99);
+        assertThat(id).isEqualTo(99);
 
         Double amount = documentContext.read("$.amount");
-        Assertions.assertThat(amount).isEqualTo(123.45);
+        assertThat(amount).isEqualTo(123.45);
     }
 
     @Test
     void shouldNotReturnACashCardWithAnUnknownId() {
         ResponseEntity<String> response = restTemplate.getForEntity("/cashcards/1000", String.class);
-        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        Assertions.assertThat(response.getBody()).isBlank();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody()).isBlank();
     }
 
     @Test
@@ -50,34 +50,45 @@ class CashCardApplicationTests {
         CashCard newCashCard = new CashCard(null, 250.00);
         ResponseEntity<Void> createResponse = restTemplate.postForEntity("/cashcards", newCashCard, Void.class);
 
-        Assertions.assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
         URI locationOfNewCard = createResponse.getHeaders().getLocation();
         ResponseEntity<String> getResponse = restTemplate.getForEntity(locationOfNewCard, String.class);
 
-        Assertions.assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
         Number id = documentContext.read("$.id");
         Double amount = documentContext.read("$.amount");
 
-        Assertions.assertThat(id).isNotNull();
-        Assertions.assertThat(amount).isEqualTo(250.00);
+        assertThat(id).isNotNull();
+        assertThat(amount).isEqualTo(250.00);
     }
 
     @Test
     void shouldReturnAllCashCardsWhenListIsRequested() {
         ResponseEntity<String> response = restTemplate.getForEntity("/cashcards", String.class);
-        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         DocumentContext documentContext = JsonPath.parse(response.getBody());
         int cashCardCount = documentContext.read("$.length()");
-        Assertions.assertThat(cashCardCount).isEqualTo(3);
+        assertThat(cashCardCount).isEqualTo(3);
 
         JSONArray ids = documentContext.read("$..id");
-        Assertions.assertThat(ids).containsExactlyInAnyOrder(99, 100, 101);
+        assertThat(ids).containsExactlyInAnyOrder(99, 100, 101);
 
         JSONArray amounts = documentContext.read("$..amount");
-        Assertions.assertThat(amounts).containsExactlyInAnyOrder(123.45, 1.0, 150.00);
+        assertThat(amounts).containsExactlyInAnyOrder(123.45, 1.0, 150.00);
+    }
+
+    @Test
+    void shouldReturnAPageOfCards() {
+        ResponseEntity<String> response = restTemplate.getForEntity("/cashcards?page=0&size=1", String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        DocumentContext documentContext = JsonPath.parse(response.getBody());
+        JSONArray page = documentContext.read("$[*]");
+
+        assertThat(page.size()).isEqualTo(1);
     }
 }
