@@ -45,7 +45,7 @@ Response
 
     ```json
   {
-      amount: 123.45
+    "amount": 123.45
   }
     ```
 
@@ -55,6 +55,32 @@ Response
 * Header: `Location=/cashcards/42`
 
 ### READ
+
+__Read all__
+
+**Request:**
+
+* Method: GET
+* URI: /cashcards
+* Body:
+
+**Response:**
+
+* Status Code: 200 OK
+* Body:
+```json
+[
+  {
+    "id": 1,
+    "amount": 123.45
+  },
+  {
+    "id": 2,
+    "amount": 50.0
+  }
+]
+  ```
+
 
 ### UPDATE
 
