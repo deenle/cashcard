@@ -35,12 +35,12 @@ Response
 | Delete    | `/cashcards/{id}` | `DELETE`    | 204 (NO DATA)   |
 
 
-### CREATE
+## CREATE
 
 **Request:**
 
 * Method: POST
-* URI: /cashcards/
+* URI: `/cashcards/`
 * Body:
 
     ```json
@@ -54,15 +54,34 @@ Response
 * Status Code: 201 CREATED
 * Header: `Location=/cashcards/42`
 
-### READ
+## READ
+
+__Read one__
+
+**Request:**
+
+* Method: GET
+* URI: `/cashcards/99`
+* Body: (empty)
+
+**Response:**
+
+* Status Code: 200 OK
+* Body:
+```json
+  {
+    "id": 99,
+    "amount": 123.45
+  }
+```
 
 __Read all__
 
 **Request:**
 
 * Method: GET
-* URI: /cashcards
-* Body:
+* URI: `/cashcards`
+* Body: (empty)
 
 **Response:**
 
@@ -82,6 +101,32 @@ __Read all__
   ```
 
 
-### UPDATE
+## UPDATE
 
-### DELETE
+**Request:**
+
+* Method: PUT
+* URI: `/cashcards/42`
+* Body:
+
+```json
+  {
+    "amount": 19.99
+  }
+```
+
+**Response:**
+
+* Status Code: 204 NO CONTENT
+
+## DELETE
+
+**Request:**
+
+* Method: DELETE
+* URI: `/cashcards/42`
+* Body: (empty)
+
+**Response:**
+
+* Status Code: 204 NO CONTENT
