@@ -1,10 +1,9 @@
 # Introduction
-A simple Family Cash Card application — a modern way for parents to manage allowance 
+A simple **RESTful API** Family Cash Card application — a modern way for parents to manage allowance 
 funds for their kiddos.
 
 # Developing
-TDD + The Red, Green, Refactor Loop
-
+Java, Spring (Boot, Data, Security), TDD, H2
 # API Contracts
 ```
 Request
